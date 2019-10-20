@@ -5,7 +5,8 @@ myNinjaApp.config([
   function($routeProvider) {
     $routeProvider
       .when("/home", {
-        templateUrl: "views/home.html"
+        templateUrl: "views/home.html",
+        controller: "NinjaController"
       })
       .when("/directory", {
         templateUrl: "views/directory.html",
@@ -17,40 +18,28 @@ myNinjaApp.config([
   }
 ]);
 
+myNinjaApp.directive("randomNinja", [
+  function() {
+    return {
+      restrict: "EA",
+      scope: {
+        ninjas: "=",
+        title: "="
+      },
+      transclude: true,
+      replace: true,
+      templateUrl: "views/random.html",
+      controller: function($scope) {
+        $scope.random = Math.floor(Math.random() * 4);
+      }
+    };
+  }
+]);
+
 myNinjaApp.controller("NinjaController", [
   "$scope",
-  function($scope) {
-    $scope.ninjas = [
-      {
-        name: "Yoshi",
-        belt: "Green",
-        rate: 50,
-        available: true,
-        thumb: "content/img/yoshi.png"
-      },
-      {
-        name: "Crystal",
-        belt: "Yellow",
-        rate: 60,
-        available: true,
-        thumb: "content/img/crystal.png"
-      },
-      {
-        name: "Ryu",
-        belt: "Orange",
-        rate: 10,
-        available: false,
-        thumb: "content/img/ryu.png"
-      },
-      {
-        name: "Shaun",
-        belt: "Black",
-        rate: 1000,
-        available: true,
-        thumb: "content/img/shaun.png"
-      }
-    ];
-
+  "$http",
+  function($scope, $http) {
     $scope.removeNinja = function(ninja) {
       var removedNinja = $scope.ninjas.indexOf(ninja);
       $scope.ninjas.splice(removedNinja, 1);
@@ -66,5 +55,9 @@ myNinjaApp.controller("NinjaController", [
       $scope.newNinja.belt = "";
       $scope.newNinja.rate = "";
     };
+
+    $http.get("data/ninjas.json").success(function(data) {
+      $scope.ninjas = data;
+    });
   }
 ]);
