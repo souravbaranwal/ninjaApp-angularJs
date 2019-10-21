@@ -56,6 +56,10 @@ myNinjaApp.controller("NinjaController", [
       $scope.newNinja.rate = "";
     };
 
+    $scope.removeAll = function() {
+      $scope.ninjas = [];
+    };
+
     $http.get("data/ninjas.json").success(function(data) {
       $scope.ninjas = data;
     });
